@@ -33,10 +33,11 @@ func main() {
 	var wg sync.WaitGroup
 	sem := make(chan struct{}, concurrency) // للتحكم في الـ concurrency
 
-	// متغيرات لعد حالة الطلبات (استخدمنا int64 عشان نستخدمها مع atomic)
+	// متغيرات لعد حالة الطلبات
 	var successCount int64
 	var failCount int64
 	var errorCount int64
+	var printedErrors int64 // متغير جديد عشان نطبع أول 5 أخطاء بس
 
 	for i := 0; i < requests; i++ {
 		wg.Add(1)
@@ -45,21 +46,31 @@ func main() {
 		go func(url string) {
 			defer wg.Done()
 			
-			// عمل الطلب
-			res, err := http.Get(url)
+			// تجهيز الطلب وإضافة User-Agent وهمي عشان نخدع حماية السيرفرات
+			req, err := http.NewRequest("GET", url, nil)
+			if err == nil {
+				req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
+			}
 			
-			// لو حصل خطأ في الاتصال نفسه (زي إن السيرفر وقع أو النت فصل)
+			// تنفيذ الطلب
+			res, err := http.DefaultClient.Do(req)
+			
 			if err != nil {
 				atomic.AddInt64(&errorCount, 1)
 				<-sem // تحرير goroutine
 				return
 			}
 			
-			// لو الطلب وصل، نتأكد من الـ Status Code
+			// فحص النتيجة
 			if res.StatusCode >= 200 && res.StatusCode < 300 {
-				atomic.AddInt64(&successCount, 1) // ناجح (مثلا 200 OK)
+				atomic.AddInt64(&successCount, 1) // ناجح
 			} else {
-				atomic.AddInt64(&failCount, 1) // فاشل (مثلا 503 أو 429)
+				atomic.AddInt64(&failCount, 1) // فاشل
+				
+				// طباعة أول 5 أخطاء بس عشان نعرف السبب
+				if atomic.AddInt64(&printedErrors, 1) <= 5 {
+					fmt.Printf("[!] Request failed - Status Code: %d\n", res.StatusCode)
+				}
 			}
 
 			// قفل الاتصال
