@@ -1,14 +1,29 @@
 # stress_tester
 
-# command-line-arguments
-./main.go:22:4: invalid character U+00A0 in identifier
-./main.go:22:10: syntax error: unexpected name   in struct type; possibly missing semicolon or newline or }
-./main.go:23:11: invalid character U+00A0 in identifier
-./main.go:24:9: invalid character U+00A0 in identifier
-./main.go:25:6: invalid character U+00A0 in identifier
-./main.go:26:11: invalid character U+00A0 in identifier
-./main.go:27:13: invalid character U+00A0 in identifier
-./main.go:27:23: syntax error: unexpected ] after top level declaration
-./main.go:29:12: invalid character U+00A0 in identifier
-./main.go:30:12: invalid character U+00A0 in identifier
-./main.go:30:12: too many errors
+🧠 [Phase 1] Initializing Deep AI Reconnaissance & Spoofing...
+
+   🌍 Network & Topology:
+      🔹 Target IP(s): 216.198.79.131 64.29.17.131 
+
+   🛡️  WAF & Anti-Bot Shield:
+      ✅ No standard WAF detected (Direct access possible)
+
+   🕵️  Data Extraction:
+      📄 Title  : Marwan Elbadry | Portfolio
+      📧 Emails : kingmarw3@gmail.com 
+
+   ⚙️  Backend & Core Technologies:
+      🔹 Web Server : Vercel
+
+   🎨 Frontend Architecture & Frameworks:
+      🔸 UI Styling : Tailwind CSS
+      🔸 UI Styling : Bootstrap
+
+   🔒 Security Headers Audit:
+      ✅ Strict-Transport-Security : Secured
+      ❌ X-Frame-Options           : VULNERABLE (Clickjacking)
+      ❌ Content-Security-Policy   : VULNERABLE (XSS Protection)
+
+🐍 [Extra] Running Python Deep Scan Plugin...
+    📑 Python Intelligence Report: Python Plugin Error: exit status 1
+
