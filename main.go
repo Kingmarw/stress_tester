@@ -19,15 +19,15 @@ import (
 )
 
 type TestResults struct {
-	mu           sync.Mutex
-	totalReqs    int
-	success      int
-	fail         int
-	netErrors    int
-	statusCodes  map[int]int
+	mu           sync.Mutex
+	totalReqs    int
+	success      int
+	fail         int
+	netErrors    int
+	statusCodes  map[int]int
 	totalLatency time.Duration
-	minLatency   time.Duration
-	maxLatency   time.Duration
+	minLatency   time.Duration
+	maxLatency   time.Duration
 }
 
 var userAgents = []string{
@@ -55,7 +55,7 @@ func spoofBrowserHeaders(req *http.Request) {
 	req.Header.Set("Sec-Fetch-Dest", "document")
 	req.Header.Set("Sec-Fetch-Mode", "navigate")
 	req.Header.Set("Sec-Fetch-Site", "none")
-	req.Header.Set("X-Forwarded-For", getRandomIP()) 
+	req.Header.Set("X-Forwarded-For", getRandomIP()) 
 }
 
 func clearScreen() {
@@ -68,16 +68,16 @@ func clearScreen() {
 }
 
 func printLogo() {
-	logo := `	 _       _________ _        _______  _______  _______            _________ _        _______ 
-	| \    /\\__   __/( (    /|(  ____ \(       )(  ____ )|\     /|  \__   __/( (    /|(  ____ \
-	|  \  / /   ) (   |  \  ( || (    \/| () () || (    )|| )   ( |     ) (   |  \  ( || (    \/
-	|  (_/ /    | |   |   \ | || |      | || || || (____)|| | _ | |     | |   |   \ | || (_____ 
-	|   _ (     | |   | (\ \) || | ____ | |(_)| ||     __)| |( )| |     | |   | (\ \) |(_____  )
-	|  ( \ \    | |   | | \   || | \_  )| |   | || (\ (   | || || |     | |   | | \   |      ) |
-	|  /  \ \___) (___| )  \  || (___) || )   ( || ) \ \__| () () |  ___) (___| )  \  |/\____) |
-	|_/    \/\_______/|/    )_)(_______)|/     \||/   \__/(_______)  \_______/|/    )_)\_______)
-                                                                                                                                                                         
-    [ (Demo) V1 PHANTOM EDITION - ADVANCED OSINT, FUZZING & CYBER INTELLIGENCE ]
+	logo := `	 _       _________ _        _______  _______  _______            _________ _        _______ 
+	| \    /\\__   __/( (    /|(  ____ \(       )(  ____ )|\     /|  \__   __/( (    /|(  ____ \
+	|  \  / /   ) (   |  \  ( || (    \/| () () || (    )|| )   ( |     ) (   |  \  ( || (    \/
+	|  (_/ /    | |   |   \ | || |      | || || || (____)|| | _ | |     | |   |   \ | || (_____ 
+	|   _ (     | |   | (\ \) || | ____ | |(_)| ||     __)| |( )| |     | |   | (\ \) |(_____  )
+	|  ( \ \    | |   | | \   || | \_  )| |   | || (\ (   | || || |     | |   | | \   |      ) |
+	|  /  \ \___) (___| )  \  || (___) || )   ( || ) \ \__| () () |  ___) (___| )  \  |/\____) |
+	|_/    \/\_______/|/    )_)(_______)|/     \||/   \__/(_______)  \_______/|/    )_)\_______)
+                                                                                                                                                                         
+    [ (Demo) V1 PHANTOM EDITION - ADVANCED OSINT, FUZZING & CYBER INTELLIGENCE ]
 =========================================================================================`
 	fmt.Println(logo)
 }
@@ -87,21 +87,21 @@ func runDeepRecon(targetURL string, client *http.Client) {
 
 	parsedURL, err := url.Parse(targetURL)
 	if err != nil {
-		fmt.Println("   ❌ Invalid URL format.")
+		fmt.Println("   ❌ Invalid URL format.")
 		return
 	}
 	hostname := parsedURL.Hostname()
 
-	fmt.Println("\n   🌍 Network & Topology:")
+	fmt.Println("\n   🌍 Network & Topology:")
 	ips, err := net.LookupIP(hostname)
 	if err == nil && len(ips) > 0 {
-		fmt.Printf("      🔹 Target IP(s): ")
+		fmt.Printf("      🔹 Target IP(s): ")
 		for _, ip := range ips {
 			fmt.Printf("%s ", ip.String())
 		}
 		fmt.Println()
 	} else {
-		fmt.Println("      🔹 Target IP: Hidden or Unresolvable")
+		fmt.Println("      🔹 Target IP: Hidden or Unresolvable")
 	}
 
 	req, _ := http.NewRequest("GET", targetURL, nil)
@@ -109,7 +109,7 @@ func runDeepRecon(targetURL string, client *http.Client) {
 	
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("   ❌ Target unreachable: %v\n", err)
+		fmt.Printf("   ❌ Target unreachable: %v\n", err)
 		return
 	}
 	defer res.Body.Close()
@@ -126,40 +126,40 @@ func runDeepRecon(targetURL string, client *http.Client) {
 	serverHeader := res.Header.Get("Server")
 
 	// WAF & Deception Detection (الرادار الذكي)
-	fmt.Println("\n   🛡️  WAF & Anti-Bot Shield:")
+	fmt.Println("\n   🛡️  WAF & Anti-Bot Shield:")
 	wafFound := false
 	if strings.Contains(strings.ToLower(serverHeader), "cloudflare") || strings.Contains(cookies, "__cf") {
-		fmt.Println("      ⚠️  Protected by: Cloudflare (Advanced WAF)")
+		fmt.Println("      ⚠️  Protected by: Cloudflare (Advanced WAF)")
 		wafFound = true
 	}
 	if strings.Contains(serverHeader, "Akamai") {
-		fmt.Println("      ⚠️  Protected by: Akamai CDN/WAF")
+		fmt.Println("      ⚠️  Protected by: Akamai CDN/WAF")
 		wafFound = true
 	}
 	if strings.Contains(bodyLower, "aes.js") || strings.Contains(cookies, "__test") {
-		fmt.Println("      🚨 DECEPTION : AES Anti-Bot Shield (InfinityFree/iFastNet)")
-		fmt.Println("      ⚠️  WARNING  : Source code is masked. Scan accuracy may drop.")
+		fmt.Println("      🚨 DECEPTION : AES Anti-Bot Shield (InfinityFree/iFastNet)")
+		fmt.Println("      ⚠️  WARNING  : Source code is masked. Scan accuracy may drop.")
 		wafFound = true
 	}
 	if strings.Contains(serverHeader, "Sucuri") {
-		fmt.Println("      ⚠️  Protected by: Sucuri Cloudproxy")
+		fmt.Println("      ⚠️  Protected by: Sucuri Cloudproxy")
 		wafFound = true
 	}
 	if !wafFound {
-		fmt.Println("      ✅ No standard WAF detected (Direct access possible)")
+		fmt.Println("      ✅ No standard WAF detected (Direct access possible)")
 	}
 
 	// Scraper
-	fmt.Println("\n   🕵️  Data Extraction:")
+	fmt.Println("\n   🕵️  Data Extraction:")
 	titleRegex := regexp.MustCompile(`(?i)<title>(.*?)</title>`)
 	if match := titleRegex.FindStringSubmatch(bodyString); len(match) > 1 {
-		fmt.Printf("      📄 Title  : %s\n", strings.TrimSpace(match[1]))
+		fmt.Printf("      📄 Title  : %s\n", strings.TrimSpace(match[1]))
 	}
 	emailRegex := regexp.MustCompile(`[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}`)
 	emails := emailRegex.FindAllString(bodyString, -1)
 	if len(emails) > 0 {
 		uniqueEmails := make(map[string]bool)
-		fmt.Printf("      📧 Emails : ")
+		fmt.Printf("      📧 Emails : ")
 		for _, e := range emails {
 			if !uniqueEmails[e] {
 				fmt.Printf("%s ", e)
@@ -170,83 +170,86 @@ func runDeepRecon(targetURL string, client *http.Client) {
 	}
 
 	// Backend & Core
-	fmt.Println("\n   ⚙️  Backend & Core Technologies:")
+	fmt.Println("\n   ⚙️  Backend & Core Technologies:")
 	if serverHeader != "" {
-		fmt.Printf("      🔹 Web Server : %s\n", serverHeader)
+		fmt.Printf("      🔹 Web Server : %s\n", serverHeader)
 	}
 	if strings.Contains(res.Header.Get("X-Powered-By"), "PHP") || strings.Contains(cookies, "PHPSESSID") || strings.Contains(bodyLower, ".php") {
-		fmt.Println("      🔹 Language   : PHP")
+		fmt.Println("      🔹 Language   : PHP")
 	}
 	if strings.Contains(cookies, "ASP.NET") || res.Header.Get("X-AspNet-Version") != "" {
-		fmt.Println("      🔹 Language   : C# / ASP.NET")
+		fmt.Println("      🔹 Language   : C# / ASP.NET")
 	}
 	if strings.Contains(cookies, "connect.sid") || strings.Contains(res.Header.Get("X-Powered-By"), "Express") {
-		fmt.Println("      🔹 Language   : Node.js (Express)")
+		fmt.Println("      🔹 Language   : Node.js (Express)")
 	}
 	if strings.Contains(cookies, "JSESSIONID") {
-		fmt.Println("      🔹 Language   : Java")
+		fmt.Println("      🔹 Language   : Java")
 	}
 
 	// Advanced Frontend Detection
-	fmt.Println("\n   🎨 Frontend Architecture & Frameworks:")
+	fmt.Println("\n   🎨 Frontend Architecture & Frameworks:")
 	uiDetected := false
 	if strings.Contains(bodyLower, "wp-content") {
-		fmt.Println("      🔸 CMS        : WordPress")
+		fmt.Println("      🔸 CMS        : WordPress")
 		uiDetected = true
 	}
 	if regexp.MustCompile(`id="__next"|/_next/static`).MatchString(bodyLower) {
-		fmt.Println("      🔸 Framework  : Next.js (React)")
+		fmt.Println("      🔸 Framework  : Next.js (React)")
 		uiDetected = true
 	} else if regexp.MustCompile(`data-reactroot|react-dom`).MatchString(bodyLower) {
-		fmt.Println("      🔸 Framework  : React.js")
+		fmt.Println("      🔸 Framework  : React.js")
 		uiDetected = true
 	}
 	if regexp.MustCompile(`id="__nuxt"|/_nuxt/`).MatchString(bodyLower) {
-		fmt.Println("      🔸 Framework  : Nuxt.js (Vue)")
+		fmt.Println("      🔸 Framework  : Nuxt.js (Vue)")
 		uiDetected = true
 	} else if regexp.MustCompile(`data-v-[a-z0-9]+`).MatchString(bodyLower) {
-		fmt.Println("      🔸 Framework  : Vue.js")
+		fmt.Println("      🔸 Framework  : Vue.js")
 		uiDetected = true
 	}
 	// التقنيات الجديدة
 	if strings.Contains(bodyLower, "_astro") {
-		fmt.Println("      🔸 Framework  : Astro.build (Modern SSG)")
+		fmt.Println("      🔸 Framework  : Astro.build (Modern SSG)")
 		uiDetected = true
 	}
 	if strings.Contains(bodyLower, "svelte-") {
-		fmt.Println("      🔸 Framework  : Svelte / SvelteKit")
+		fmt.Println("      🔸 Framework  : Svelte / SvelteKit")
 		uiDetected = true
 	}
 	if strings.Contains(bodyLower, "vite/client") || strings.Contains(bodyLower, "@vite") {
-		fmt.Println("      🔸 Bundler    : Vite.js")
+		fmt.Println("      🔸 Bundler    : Vite.js")
 		uiDetected = true
 	}
 
 	if regexp.MustCompile(`class="[^"]*\b(flex|grid|p-[0-9]|text-center|bg-[a-z]+-[0-9]+)\b[^"]*"`).MatchString(bodyLower) {
-		fmt.Println("      🔸 UI Styling : Tailwind CSS")
+		fmt.Println("      🔸 UI Styling : Tailwind CSS")
 		uiDetected = true
 	}
 	if regexp.MustCompile(`class="[^"]*\b(container|row|col-|btn-|navbar)\b[^"]*"`).MatchString(bodyLower) {
-		fmt.Println("      🔸 UI Styling : Bootstrap")
+		fmt.Println("      🔸 UI Styling : Bootstrap")
 		uiDetected = true
 	}
 	if !uiDetected {
-		fmt.Println("      🔸 Architecture: Native HTML/CSS/JS (Or obfuscated)")
+		fmt.Println("      🔸 Architecture: Native HTML/CSS/JS (Or obfuscated)")
 	}
 
-	fmt.Println("\n   🔒 Security Headers Audit:")
+	fmt.Println("\n   🔒 Security Headers Audit:")
 	headers := map[string]string{
 		"Strict-Transport-Security": "HSTS",
-		"X-Frame-Options":           "Clickjacking",
-		"Content-Security-Policy":   "XSS Protection",
+		"X-Frame-Options":           "Clickjacking",
+		"Content-Security-Policy":   "XSS Protection",
 	}
 	for h, desc := range headers {
 		if res.Header.Get(h) != "" {
-			fmt.Printf("      ✅ %-25s : Secured\n", h)
+			fmt.Printf("      ✅ %-25s : Secured\n", h)
 		} else {
-			fmt.Printf("      ❌ %-25s : VULNERABLE (%s)\n", h, desc)
+			fmt.Printf("      ❌ %-25s : VULNERABLE (%s)\n", h, desc)
 		}
 	}
+    fmt.Println("\n🐍 [Extra] Running Python Deep Scan Plugin...")
+    pythonResult := runPythonPlugin(targetURL)
+    fmt.Printf("    📑 Python Intelligence Report: %s\n", pythonResult)
 	fmt.Println("=========================================================================================")
 }
 
@@ -256,7 +259,7 @@ func runDeepFuzzer(targetURL string, client *http.Client) {
 	
 	hiddenPaths := []string{
 		"/.env", "/.git/config", "/wp-config.php.bak", "/config.json",
-		"/admin", "/dashboard", "/api/v1/users", "/swagger/v1/swagger.json", 
+		"/admin", "/dashboard", "/api/v1/users", "/swagger/v1/swagger.json", 
 		"/phpinfo.php", "/robots.txt", "/sitemap.xml", "/.DS_Store",
 	}
 
@@ -266,17 +269,17 @@ func runDeepFuzzer(targetURL string, client *http.Client) {
 		go func(p string) {
 			defer wg.Done()
 			req, _ := http.NewRequest("GET", baseURL+p, nil)
-			spoofBrowserHeaders(req) 
+			spoofBrowserHeaders(req) 
 			
 			res, err := client.Do(req)
 			if err == nil {
 				// Honeypot heuristic: If an obscure file returns 200 but content length is huge, it might be a honeypot catching bots.
 				if res.StatusCode == 200 {
-					fmt.Printf("   🚨 FATAL EXPOSURE : %-25s (HTTP 200 OK)\n", p)
+					fmt.Printf("   🚨 FATAL EXPOSURE : %-25s (HTTP 200 OK)\n", p)
 				} else if res.StatusCode == 403 {
-					fmt.Printf("   🔒 RESTRICTED     : %-25s (HTTP 403 - Exists)\n", p)
+					fmt.Printf("   🔒 RESTRICTED     : %-25s (HTTP 403 - Exists)\n", p)
 				} else if res.StatusCode == 401 {
-					fmt.Printf("   🔑 AUTH REQUIRED  : %-25s (HTTP 401 - Valid Target)\n", p)
+					fmt.Printf("   🔑 AUTH REQUIRED  : %-25s (HTTP 401 - Valid Target)\n", p)
 				}
 				res.Body.Close()
 			}
@@ -335,19 +338,19 @@ func runLoadTest(url string, requests int, concurrency int, client *http.Client)
 	totalTime := time.Since(startTime)
 
 	fmt.Println("\n================================ 📈 MISSION REPORT ================================")
-	fmt.Printf("   🚀 Raw Speed      : %.2f req/sec\n", float64(results.totalReqs)/totalTime.Seconds())
+	fmt.Printf("   🚀 Raw Speed      : %.2f req/sec\n", float64(results.totalReqs)/totalTime.Seconds())
 	avgLatency := time.Duration(0)
 	if results.totalReqs-results.netErrors > 0 {
 		avgLatency = time.Duration(int64(results.totalLatency) / int64(results.totalReqs-results.netErrors))
 	}
-	fmt.Printf("   ⏱️  Server Ping    : %v (Fastest: %v | Slowest: %v)\n", avgLatency, results.minLatency, results.maxLatency)
+	fmt.Printf("   ⏱️  Server Ping    : %v (Fastest: %v | Slowest: %v)\n", avgLatency, results.minLatency, results.maxLatency)
 	fmt.Println("-----------------------------------------------------------------------------------------")
-	fmt.Printf("   ✅ Hits: %d  |  ❌ Blocks/Fails: %d  |  ⚠️ Dropped: %d\n", results.success, results.fail, results.netErrors)
+	fmt.Printf("   ✅ Hits: %d  |  ❌ Blocks/Fails: %d  |  ⚠️ Dropped: %d\n", results.success, results.fail, results.netErrors)
 	
 	if len(results.statusCodes) > 0 {
-		fmt.Println("\n   📌 Server Response Breakdown:")
+		fmt.Println("\n   📌 Server Response Breakdown:")
 		for code, count := range results.statusCodes {
-			fmt.Printf("      [ HTTP %d ] -> Processed %d times\n", code, count)
+			fmt.Printf("      [ HTTP %d ] -> Processed %d times\n", code, count)
 		}
 	}
 	fmt.Println("=========================================================================================")
@@ -365,7 +368,7 @@ func main() {
 		urlInput, _ := reader.ReadString('\n')
 		urlInput = strings.TrimSpace(urlInput)
 		
-		// Auto-fix URL 
+		// Auto-fix URL 
 		urlInput = strings.ReplaceAll(urlInput, "https://http//", "http://")
 		if urlInput != "" && !strings.HasPrefix(urlInput, "http://") && !strings.HasPrefix(urlInput, "https://") {
 			urlInput = "https://" + urlInput
@@ -380,10 +383,10 @@ func main() {
 		client := &http.Client{Timeout: 10 * time.Second}
 
 		fmt.Println("\n🔥 Select Operation Mode:")
-		fmt.Println("   1. 🧠 Deep Recon (WAF, OSINT, Tech Core & Deception Check)")
-		fmt.Println("   2. 💫 Phantom Fuzzer (Hunt for Hidden Routes)")
-		fmt.Println("   3. ⚔️ Load Tester (Spoofed IPs Stress Attack)")
-		fmt.Println("   4. 🚀 APEX MODE (Full Automated Audit)")
+		fmt.Println("   1. 🧠 Deep Recon (WAF, OSINT, Tech Core & Deception Check)")
+		fmt.Println("   2. 💫 Phantom Fuzzer (Hunt for Hidden Routes)")
+		fmt.Println("   3. ⚔️ Load Tester (Spoofed IPs Stress Attack)")
+		fmt.Println("   4. 🚀 APEX MODE (Full Automated Audit)")
 		fmt.Print("\n👉 Enter choice (1-4): ")
 		
 		choiceStr, _ := reader.ReadString('\n')
@@ -395,12 +398,12 @@ func main() {
 		case "2":
 			runDeepFuzzer(urlInput, client)
 		case "3":
-			fmt.Print("   ⚡ Total Requests (Default 100): ")
+			fmt.Print("   ⚡ Total Requests (Default 100): ")
 			reqStr, _ := reader.ReadString('\n')
 			reqs, _ := strconv.Atoi(strings.TrimSpace(reqStr))
 			if reqs <= 0 { reqs = 100 }
 
-			fmt.Print("   🚀 Concurrency (Default 10): ")
+			fmt.Print("   🚀 Concurrency (Default 10): ")
 			conStr, _ := reader.ReadString('\n')
 			conc, _ := strconv.Atoi(strings.TrimSpace(conStr))
 			if conc <= 0 { conc = 10 }
@@ -423,4 +426,16 @@ func main() {
 			break
 		}
 	}
+}
+func runPythonPlugin(target string) string {
+	// تنفيذ أمر: python3 deep_scan.py target
+	cmd := exec.Command("python3", "deep_scan.py", target)
+	
+	// سحب النتيجة اللي بايثون طبعتها (Stdout)
+	out, err := cmd.Output()
+	if err != nil {
+		return "Python Plugin Error: " + err.Error()
+	}
+	
+	return strings.TrimSpace(string(out))
 }
