@@ -1,3 +1,0 @@
-# stress_tester
-
-
